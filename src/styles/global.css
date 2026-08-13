@@ -212,6 +212,32 @@
   will-change: auto;
 }
 
+/* --- Lista de proyectos plegable ----------------------------------------
+   Los proyectos por encima del limite se ocultan desde el primer pintado, para
+   que no haya salto visible. Si el modulo de movimiento no llega a arrancar, el
+   temporizador del <head> los muestra todos: nunca queda contenido inaccesible
+   detras de un boton que no responde. */
+.js [data-projects][data-expanded='false'] [data-project-hidden] {
+  display: none;
+}
+
+.motion-failed [data-project-hidden] {
+  display: revert !important;
+}
+
+/* Sin modulo de movimiento no hay nada que plegar, asi que el boton sobra. */
+.motion-failed [data-projects-toggle] {
+  display: none;
+}
+
+[data-projects-chevron] {
+  transition: transform 500ms var(--ease-expo);
+}
+
+[data-projects][data-expanded='true'] [data-projects-chevron] {
+  transform: rotate(180deg);
+}
+
 /* --- Linea de la trayectoria laboral ------------------------------------- */
 .timeline-progress {
   transform: scaleY(0);
@@ -272,6 +298,10 @@
 
   .cue-pulse {
     animation: none;
+  }
+
+  [data-projects-chevron] {
+    transition: none;
   }
 
   .btn:hover,

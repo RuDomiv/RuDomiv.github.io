@@ -58,6 +58,38 @@ Datos que **no** deben entrar al sitio (ver brief, sección 6): fecha de
 nacimiento, dirección, teléfono, número de cédula o identificadores oficiales,
 y nombres propios de terceros.
 
+## Fotos y enlaces en los proyectos
+
+La lista de proyectos muestra los cuatro primeros y esconde el resto tras un
+botón, para no obligar a nadie a recorrerla entera. Los nueve se envían siempre
+en el HTML, así que Google y los lectores de pantalla los ven todos.
+
+Cada proyecto admite fotos y enlaces, y ambos son opcionales: un proyecto sin
+ellos se ve exactamente igual. Se declaran en `PROJECT_MEDIA`, dentro de
+[`src/i18n/content.ts`](src/i18n/content.ts), **aparte del texto traducido**,
+porque una URL o una foto no cambian con el idioma y repetirlas en los tres
+sería una fuente segura de errores.
+
+La clave es la posición del proyecto en la lista, empezando en 0. Para añadir
+medios al primer proyecto y al tercero:
+
+```ts
+export const PROJECT_MEDIA: Record<number, ProjectMedia> = {
+  0: {
+    images: [{ src: 'proyectos/lvdt.jpg', alt: 'Montaje del transductor' }],
+    links: [{ label: 'Repositorio', url: 'https://github.com/RuDomiv/lvdt' }],
+  },
+  2: {
+    images: [{ src: 'proyectos/eog-1.jpg' }, { src: 'proyectos/eog-2.jpg' }],
+  },
+};
+```
+
+Las imágenes van en `public/`, por ejemplo `public/proyectos/lvdt.jpg`. Se
+recortan a proporción 16:10, así que conviene que el motivo esté centrado. Una
+sola imagen ocupa media columna; dos o más se reparten en una rejilla. Si
+omites `alt`, se usa el título del proyecto en el idioma de la página.
+
 ## Cómo funciona el movimiento
 
 Todo vive en [`src/scripts/motion.ts`](src/scripts/motion.ts). Dos librerías:

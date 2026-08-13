@@ -36,31 +36,44 @@ const EASE = 'expo.out';
 // -----------------------------------------------------------------------------
 const nav = document.getElementById('site-nav');
 if (nav) {
+  const syncNav = (scroll: number) => {
+    nav.dataset.stuck = scroll > 12 ? 'true' : 'false';
+  };
+
   ScrollTrigger.create({
     start: 0,
     end: 'max',
-    onUpdate: (self) => {
-      nav.dataset.stuck = self.scroll() > 12 ? 'true' : 'false';
-    },
+    onUpdate: (self) => syncNav(self.scroll()),
+    // Tambien al recalcular. Un refresh a mitad de pagina, como el que provoca
+    // desplegar la lista de proyectos, reevalua el disparador y sin esto la
+    // barra se quedaria transparente con el contenido pasando por debajo.
+    onRefresh: (self) => syncNav(self.scroll()),
   });
 }
+
+// Referencia compartida: el desplegado de proyectos la usa para devolver el
+// scroll al plegar, y solo existe cuando el movimiento no esta reducido.
+let lenis: Lenis | null = null;
 
 if (!prefersReducedMotion) {
   // -------------------------------------------------------------------------
   // Scroll suave con inercia
   // -------------------------------------------------------------------------
-  const lenis = new Lenis({
+  // Constante local: dentro de los closures que siguen, TypeScript no puede
+  // garantizar que la variable compartida siga sin ser nula.
+  const smooth = new Lenis({
     duration: 1.1,
     easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
     smoothWheel: true,
     touchMultiplier: 1.8,
   });
+  lenis = smooth;
 
   // Lenis y GSAP deben compartir un unico reloj. Con dos bucles de animacion
   // independientes, los disparadores de scroll van medio fotograma por detras
   // de la posicion real y el desfase se nota.
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  smooth.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => smooth.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
 
   // Los anclajes internos tambien deben pasar por Lenis, o el salto seria seco.
@@ -73,7 +86,7 @@ if (!prefersReducedMotion) {
       if (!target) return;
 
       event.preventDefault();
-      lenis.scrollTo(target as HTMLElement, { offset: -72, duration: 1.3 });
+      smooth.scrollTo(target as HTMLElement, { offset: -72, duration: 1.3 });
     });
   });
 
@@ -175,6 +188,76 @@ if (!prefersReducedMotion) {
   if (import.meta.env.DEV) {
     (window as unknown as Record<string, unknown>).__motion = { gsap, ScrollTrigger, lenis };
   }
+}
+
+// -----------------------------------------------------------------------------
+// Lista de proyectos plegable
+//
+// Fuera de la condicion de movimiento reducido: poder desplegar la lista no es
+// un adorno, es la unica via de acceso al resto de proyectos. Con movimiento
+// reducido el contenido aparece sin transicion, pero aparece.
+// -----------------------------------------------------------------------------
+const projects = document.querySelector<HTMLElement>('[data-projects]');
+const toggle = projects?.querySelector<HTMLButtonElement>('[data-projects-toggle]');
+const list = projects?.querySelector<HTMLElement>('[data-projects-list]');
+const toggleLabel = projects?.querySelector<HTMLElement>('[data-projects-label]');
+
+if (projects && toggle && list && toggleLabel) {
+  const labelMore = toggle.dataset.labelMore ?? '';
+  const labelLess = toggle.dataset.labelLess ?? '';
+  const hiddenItems = Array.from(
+    projects.querySelectorAll<HTMLElement>('[data-project-hidden]')
+  );
+
+  toggle.addEventListener('click', () => {
+    const wasExpanded = projects.dataset.expanded === 'true';
+
+    // Se mide antes y despues de cambiar el estado, porque los elementos
+    // ocultos estan en display:none y su altura no es conocida de antemano.
+    const startHeight = list.offsetHeight;
+    projects.dataset.expanded = wasExpanded ? 'false' : 'true';
+    const endHeight = list.offsetHeight;
+
+    toggle.setAttribute('aria-expanded', String(!wasExpanded));
+    toggleLabel.textContent = wasExpanded ? labelMore : labelLess;
+
+    if (prefersReducedMotion) {
+      ScrollTrigger.refresh();
+      return;
+    }
+
+    gsap.killTweensOf(list);
+    list.style.overflow = 'hidden';
+
+    gsap.fromTo(
+      list,
+      { height: startHeight },
+      {
+        height: endHeight,
+        duration: 0.85,
+        ease: EASE,
+        onComplete: () => {
+          list.style.height = '';
+          list.style.overflow = '';
+          // La altura del documento cambio: los disparadores que quedan por
+          // debajo apuntarian a posiciones equivocadas si no se recalculan.
+          ScrollTrigger.refresh();
+        },
+      }
+    );
+
+    if (wasExpanded) {
+      // Al plegar, el usuario se quedaria flotando en mitad de la nada.
+      const section = projects.closest('section');
+      if (section) lenis?.scrollTo(section, { offset: -72, duration: 0.9 });
+    } else {
+      gsap.fromTo(
+        hiddenItems,
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.85, ease: EASE, stagger: 0.05, delay: 0.08 }
+      );
+    }
+  });
 }
 
 export {};

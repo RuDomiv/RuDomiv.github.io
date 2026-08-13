@@ -1,6 +1,7 @@
 ---
 import Section from './Section.astro';
-import { CONTENT, type Locale } from '../i18n/content';
+import { CONTENT, PROJECT_MEDIA, type Locale } from '../i18n/content';
+import { withBase } from '../i18n/utils';
 
 interface Props {
   lang: Locale;
@@ -8,39 +9,131 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = CONTENT[lang].projects;
+
+/** Proyectos visibles antes de desplegar. El resto queda tras el boton. */
+const VISIBLE = 4;
+const collapsible = t.items.length > VISIBLE;
 ---
 
 <!--
   Misma rejilla que Formación y Experiencia, con la numeración ocupando la
-  columna que allí llevan las fechas. Cada proyecto se revela por separado, no
-  en bloque: la lista es larga y un stagger único dejaría a los últimos
-  animándose fuera de pantalla.
--->
-<Section
-  id="proyectos"
-  eyebrow={t.eyebrow}
-  title={t.title}
-  lead={t.lead}
-  class="bg-surface"
->
-  <ol class="border-t border-line">
-    {
-      t.items.map((item, i) => (
-        <li class="border-b border-line py-8" data-reveal>
-          <div class="grid gap-x-10 gap-y-3 lg:grid-cols-[13rem_minmax(0,1fr)]">
-            <p class="tnum text-[0.9375rem] text-ink-3 lg:pt-1.5">
-              {String(i + 1).padStart(2, '0')}
-            </p>
+  columna que allí llevan las fechas.
 
-            <div>
-              <h3 class="max-w-3xl text-[1.25rem] font-semibold tracking-[-0.02em] sm:text-[1.5rem]">
-                {item.title}
-              </h3>
-              <p class="mt-3 max-w-2xl text-[1.0625rem] leading-[1.7] text-ink-2">{item.text}</p>
-            </div>
-          </div>
-        </li>
-      ))
+  La lista se sirve completa en el HTML, aunque solo se muestren los primeros
+  cuatro: así los buscadores y los lectores de pantalla ven los nueve, y quien
+  no quiera leerlos todos no paga el scroll.
+
+  Fotos y enlaces son opcionales y viven en PROJECT_MEDIA. Un proyecto sin
+  medios se ve exactamente igual que antes de existir esta función.
+-->
+<Section id="proyectos" eyebrow={t.eyebrow} title={t.title} lead={t.lead} class="bg-surface">
+  <div data-projects data-expanded="false">
+    <ol class="border-t border-line" data-projects-list>
+      {
+        t.items.map((item, i) => {
+          const media = PROJECT_MEDIA[i] ?? {};
+          const isHidden = collapsible && i >= VISIBLE;
+          const images = media.images ?? [];
+          const links = media.links ?? [];
+
+          return (
+            <li
+              class="border-b border-line py-8"
+              data-reveal={isHidden ? undefined : ''}
+              data-project-hidden={isHidden ? '' : undefined}
+            >
+              <div class="grid gap-x-10 gap-y-3 lg:grid-cols-[13rem_minmax(0,1fr)]">
+                <p class="tnum text-[0.9375rem] text-ink-3 lg:pt-1.5">
+                  {String(i + 1).padStart(2, '0')}
+                </p>
+
+                <div>
+                  <h3 class="max-w-3xl text-[1.25rem] font-semibold tracking-[-0.02em] sm:text-[1.5rem]">
+                    {item.title}
+                  </h3>
+                  <p class="mt-3 max-w-2xl text-[1.0625rem] leading-[1.7] text-ink-2">{item.text}</p>
+
+                  {links.length > 0 && (
+                    <ul class="mt-5 flex flex-wrap gap-x-7 gap-y-2">
+                      {links.map((link) => (
+                        <li>
+                          <a
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="link-accent inline-flex items-center gap-1.5 text-[0.9375rem]"
+                          >
+                            {link.label}
+                            <svg
+                              width="11"
+                              height="11"
+                              viewBox="0 0 12 12"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              aria-hidden="true"
+                            >
+                              <path d="M3 9 9 3M4.2 3H9v4.8" />
+                            </svg>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {images.length > 0 && (
+                    <div
+                      class:list={[
+                        'mt-6 grid gap-3',
+                        images.length > 1 ? 'max-w-2xl sm:grid-cols-2' : 'max-w-md',
+                      ]}
+                    >
+                      {images.map((image) => (
+                        <img
+                          src={withBase(image.src)}
+                          alt={image.alt ?? item.title}
+                          loading="lazy"
+                          decoding="async"
+                          class="aspect-16/10 w-full rounded-xl bg-white object-cover"
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </li>
+          );
+        })
+      }
+    </ol>
+
+    {
+      collapsible && (
+        <div class="mt-10 flex justify-center">
+          <button
+            type="button"
+            class="btn btn-quiet"
+            data-projects-toggle
+            data-label-more={t.showAll}
+            data-label-less={t.showLess}
+            aria-expanded="false"
+          >
+            <span data-projects-label>{t.showAll}</span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 14 14"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+              data-projects-chevron
+            >
+              <path d="M2 5 7 10 12 5" />
+            </svg>
+          </button>
+        </div>
+      )
     }
-  </ol>
+  </div>
 </Section>

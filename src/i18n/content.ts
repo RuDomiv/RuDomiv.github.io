@@ -69,6 +69,9 @@ export interface Content {
     eyebrow: string;
     title: string;
     lead: string;
+    /** Rotulos del boton que despliega el resto de la lista. */
+    showAll: string;
+    showLess: string;
     items: { title: string; text: string }[];
   };
   education: {
@@ -114,6 +117,36 @@ export const EMAIL = 'ru-dominguez@javeriana.edu.co';
  */
 export const PHOTO = 'foto.jpg';
 export const PHOTO_FALLBACK = 'foto-placeholder.svg';
+
+export interface ProjectMedia {
+  /** Rutas dentro de /public. Recomendado: public/proyectos/nombre.jpg */
+  images?: { src: string; alt?: string }[];
+  links?: { label: string; url: string }[];
+}
+
+/**
+ * Fotos y enlaces de cada proyecto.
+ *
+ * Van aparte del contenido traducido y se comparten entre los tres idiomas,
+ * porque una URL o una foto no cambian con el idioma y repetirlas tres veces
+ * seria una fuente segura de divergencias.
+ *
+ * La clave es la posicion del proyecto dentro de `projects.items`, empezando
+ * en 0. Todo es opcional: un proyecto sin entrada aqui se ve exactamente igual
+ * que si nunca se hubiera anadido esta funcion.
+ *
+ * Para anadir medios al primer proyecto:
+ *
+ *   export const PROJECT_MEDIA: Record<number, ProjectMedia> = {
+ *     0: {
+ *       images: [{ src: 'proyectos/lvdt.jpg', alt: 'Montaje del transductor' }],
+ *       links: [{ label: 'Repositorio', url: 'https://github.com/RuDomiv/lvdt' }],
+ *     },
+ *   };
+ *
+ * Si se omite `alt`, se usa el titulo del proyecto en el idioma de la pagina.
+ */
+export const PROJECT_MEDIA: Record<number, ProjectMedia> = {};
 
 /** Ruta del PDF dentro de /public. Cambiala si renombras el archivo. */
 export const CV_FILES: Record<Locale, string> = {
@@ -215,6 +248,8 @@ const es: Content = {
     eyebrow: 'Trabajo técnico',
     title: 'Proyectos',
     lead: 'Selección de proyectos académicos y de laboratorio en electrónica analógica, sistemas embebidos y procesamiento de señales.',
+    showAll: 'Ver todos los proyectos',
+    showLess: 'Ver menos',
     items: [
       {
         title: 'Sistema de acondicionamiento de señal mixta para transductores LVDT',
@@ -440,6 +475,8 @@ const en: Content = {
     eyebrow: 'Technical work',
     title: 'Projects',
     lead: 'Selection of academic and laboratory projects in analog electronics, embedded systems, and signal processing.',
+    showAll: 'View all projects',
+    showLess: 'View less',
     items: [
       {
         title: 'Mixed-signal conditioning system for LVDT transducers',
@@ -665,6 +702,8 @@ const fr: Content = {
     eyebrow: 'Travail technique',
     title: 'Projets',
     lead: 'Sélection de projets académiques et de laboratoire en électronique analogique, systèmes embarqués et traitement du signal.',
+    showAll: 'Voir tous les projets',
+    showLess: 'Voir moins',
     items: [
       {
         title: 'Système de conditionnement de signal mixte pour capteurs LVDT',

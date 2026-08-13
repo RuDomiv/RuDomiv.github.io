@@ -136,8 +136,19 @@ de "lo que ha hecho" y deja después las credenciales. Es uno de los dos
 capítulos sobre fondo gris.
 
 Nueve proyectos académicos y de laboratorio. Cada uno lleva un número, un título
-corto y una sola descripción. Sin capturas, sin enlaces a repositorios y sin
-etiquetas de tecnología: el peso lo lleva la redacción.
+corto y una sola descripción. Sin etiquetas de tecnología: el peso lo lleva la
+redacción.
+
+**Se muestran los cuatro primeros** y el resto queda tras un botón que despliega
+la lista. Los nueve viajan siempre en el HTML, de modo que buscadores y lectores
+de pantalla los ven completos; lo que se evita es obligar a recorrerlos a quien
+solo quiere hacerse una idea. Al plegar, la página devuelve el scroll al inicio
+de la sección para no dejar al lector flotando.
+
+Cada proyecto admite **fotos y enlaces opcionales**, declarados en
+`PROJECT_MEDIA` (ver README). Van aparte del texto traducido porque no cambian
+con el idioma. Un proyecto sin medios se ve exactamente igual que uno con ellos
+quitados: no hay huecos ni marcadores de posición.
 
 Redactados en **primera persona y en pasado** ("Diseñé e implementé"), igual que
 las entradas de experiencia. El material de origen venía en tercera persona, que
@@ -153,9 +164,6 @@ resultaba incoherente. Los títulos van en mayúscula solo inicial.
 7. Sistema embebido e IoT para control de acceso
 8. Display gráfico rotativo por persistencia de visión
 9. Sistema mecatrónico automatizado de juego de bolos
-
-`PENDIENTE`: si más adelante hay repositorios públicos o fotografías de los
-montajes, cada proyecto admite un enlace sin romper la maqueta.
 
 `PENDIENTE`: el banco de contenido anterior registraba también "circuitos de
 señal mixta con microcontroladores de la familia PIC, con distintos periféricos y
@@ -330,6 +338,6 @@ admisión pero no en un sitio público:
 3. **PDF con la identidad del sitio.** Hoy se sirve el Europass en francés tal
    cual. Más adelante puede rediseñarse una versión de una página que combine con
    el sitio.
-4. **Enlaces o imágenes de los proyectos.** La sección ya está construida (3.5),
-   pero cada proyecto podría enlazar a un repositorio o a una fotografía del
-   montaje.
+4. **Material gráfico de los proyectos.** El soporte para fotos y enlaces ya
+   está construido y probado (3.5), pero `PROJECT_MEDIA` está vacío: faltan las
+   fotografías de los montajes y los enlaces a repositorios.
