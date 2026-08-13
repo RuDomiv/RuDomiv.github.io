@@ -1,0 +1,33 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import Highlight from '../../components/Highlight.astro';
+import About from '../../components/About.astro';
+import Experience from '../../components/Experience.astro';
+import Projects from '../../components/Projects.astro';
+import Education from '../../components/Education.astro';
+import Skills from '../../components/Skills.astro';
+import SoftSkills from '../../components/SoftSkills.astro';
+import Languages from '../../components/Languages.astro';
+import Contact from '../../components/Contact.astro';
+import { LOCALES, type Locale } from '../../i18n/content';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+---
+
+<Base lang={lang}>
+  <Hero lang={lang} />
+  <Highlight lang={lang} />
+  <About lang={lang} />
+  <Experience lang={lang} />
+  <Projects lang={lang} />
+  <Education lang={lang} />
+  <Skills lang={lang} />
+  <SoftSkills lang={lang} />
+  <Languages lang={lang} />
+  <Contact lang={lang} />
+</Base>

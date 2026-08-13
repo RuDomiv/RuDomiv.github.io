@@ -1,0 +1,46 @@
+---
+import Section from './Section.astro';
+import { CONTENT, type Locale } from '../i18n/content';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = CONTENT[lang].projects;
+---
+
+<!--
+  Misma rejilla que Formación y Experiencia, con la numeración ocupando la
+  columna que allí llevan las fechas. Cada proyecto se revela por separado, no
+  en bloque: la lista es larga y un stagger único dejaría a los últimos
+  animándose fuera de pantalla.
+-->
+<Section
+  id="proyectos"
+  eyebrow={t.eyebrow}
+  title={t.title}
+  lead={t.lead}
+  class="bg-surface"
+>
+  <ol class="border-t border-line">
+    {
+      t.items.map((item, i) => (
+        <li class="border-b border-line py-8" data-reveal>
+          <div class="grid gap-x-10 gap-y-3 lg:grid-cols-[13rem_minmax(0,1fr)]">
+            <p class="tnum text-[0.9375rem] text-ink-3 lg:pt-1.5">
+              {String(i + 1).padStart(2, '0')}
+            </p>
+
+            <div>
+              <h3 class="max-w-3xl text-[1.25rem] font-semibold tracking-[-0.02em] sm:text-[1.5rem]">
+                {item.title}
+              </h3>
+              <p class="mt-3 max-w-2xl text-[1.0625rem] leading-[1.7] text-ink-2">{item.text}</p>
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</Section>

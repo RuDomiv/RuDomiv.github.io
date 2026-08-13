@@ -1,0 +1,26 @@
+---
+import Section from './Section.astro';
+import { CONTENT, type Locale } from '../i18n/content';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = CONTENT[lang].soft;
+---
+
+<Section id="como-trabajo" eyebrow={t.eyebrow} title={t.title}>
+  <!-- Cada punto es un hecho comprobable en una linea. No hay relato: la
+       narrativa larga pertenece a una carta de motivacion, no a un CV. -->
+  <ul class="grid gap-x-16 gap-y-10 md:grid-cols-2 lg:gap-y-12" data-stagger>
+    {
+      t.items.map((item) => (
+        <li class="border-t border-line-soft pt-5">
+          <h3 class="text-[1.0625rem] font-semibold tracking-[-0.015em]">{item.label}</h3>
+          <p class="mt-2 max-w-md text-[1.0625rem] leading-[1.6] text-ink-2">{item.text}</p>
+        </li>
+      ))
+    }
+  </ul>
+</Section>

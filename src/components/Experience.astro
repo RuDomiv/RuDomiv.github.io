@@ -1,0 +1,65 @@
+---
+import Section from './Section.astro';
+import { CONTENT, type Locale } from '../i18n/content';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = CONTENT[lang].experience;
+---
+
+<Section id="experiencia" eyebrow={t.eyebrow} title={t.title} lead={t.lead}>
+  <!--
+    Una sola linea recorre las dos organizaciones. Se dibuja de arriba a abajo
+    ligada al scroll, y cada hito se revela y enciende su punto al ser
+    alcanzado. El contenido es el del CV: fechas, cargo y lo que se hizo.
+  -->
+  <div class="relative" data-timeline>
+    <div class="absolute inset-y-0 left-[7px] w-px bg-line" aria-hidden="true"></div>
+    <div
+      class="timeline-progress absolute inset-y-0 left-[7px] w-px bg-ink"
+      data-timeline-progress
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="space-y-14 sm:space-y-20">
+      {
+        t.orgs.map((org) => (
+          <article>
+            <header class="relative pl-10 sm:pl-14" data-reveal>
+              <h3 class="text-[clamp(1.5rem,3vw,2.25rem)]">{org.name}</h3>
+              <p class="mt-1 text-[0.9375rem] text-ink-3">{org.city}</p>
+            </header>
+
+            <ol class="mt-8">
+              {org.jobs.map((job) => (
+                <li class="timeline-item relative pl-10 sm:pl-14" data-milestone>
+                  <span
+                    class="timeline-dot absolute top-[0.5rem] left-0 h-3.5 w-3.5 rounded-full border-2 border-line bg-white"
+                    aria-hidden="true"
+                  />
+
+                  <div class="grid gap-x-10 gap-y-2 pb-12 lg:grid-cols-[13rem_minmax(0,1fr)]">
+                    <time class="block text-[0.9375rem] text-ink-3 lg:pt-1">{job.period}</time>
+
+                    <div>
+                      <h4 class="text-[1.25rem] font-semibold tracking-[-0.02em] sm:text-[1.5rem]">
+                        {job.role}
+                      </h4>
+                      <p class="mt-3 max-w-2xl text-[1.0625rem] leading-[1.7] text-ink-2">
+                        {job.detail}
+                      </p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</Section>

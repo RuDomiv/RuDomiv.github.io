@@ -1,0 +1,305 @@
+@import 'tailwindcss';
+
+/* ===========================================================================
+   SISTEMA VISUAL
+   Minimalismo premium: paleta casi monocromatica, un unico acento sobrio
+   reservado a enlaces y llamadas a la accion, y secciones tipo capitulo con
+   mucho aire. Nada compite con la tipografia.
+   =========================================================================== */
+@theme {
+  /* Superficies */
+  --color-white: #ffffff;
+  --color-surface: #f5f5f7;
+  --color-black: #000000;
+  --color-near-black: #0a0a0a;
+
+  /* Tinta */
+  --color-ink: #1d1d1f;
+  --color-ink-2: #6e6e73;
+  --color-ink-3: #86868b;
+
+  /* Unico acento. Cumple contraste AA sobre blanco (5.5:1). */
+  --color-accent: #0066cc;
+  --color-accent-hover: #0077ed;
+
+  /* Lineas */
+  --color-line: #d2d2d7;
+  --color-line-soft: #e8e8ed;
+
+  /* Tipografia del sistema Apple, con Inter autoalojada como respaldo real
+     en Windows, Linux y Android. */
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Inter Variable', 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif;
+
+  /* Curvas equivalentes a power2.out y expo.out de GSAP, para que las
+     transiciones CSS y las de GSAP se sientan como un mismo sistema. */
+  --ease-power2: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    /* El scroll suave lo gobierna Lenis. `scroll-behavior: smooth` nativo
+       entraria en conflicto con el, asi que no se declara. */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-white);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    letter-spacing: -0.01em;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  time,
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-accent) 20%, transparent);
+  }
+}
+
+@layer components {
+  /* Ancho de capitulo. Generoso, pero nunca a sangre en pantallas grandes. */
+  .container-page {
+    width: 100%;
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container-page {
+      padding-inline: 4rem;
+    }
+  }
+
+  .eyebrow {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    color: var(--color-ink-3);
+  }
+
+  /* --- Micro interacciones -----------------------------------------------
+     La escala se mantiene por debajo del 3%: a partir de ahi deja de leerse
+     como respuesta del material y empieza a leerse como animacion. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 980px;
+    padding: 0.8125rem 1.375rem;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    transition:
+      transform 400ms var(--ease-expo),
+      opacity 400ms var(--ease-expo),
+      background-color 400ms var(--ease-expo),
+      color 400ms var(--ease-expo),
+      border-color 400ms var(--ease-expo);
+  }
+
+  .btn:hover {
+    transform: scale(1.022);
+    opacity: 0.92;
+  }
+
+  .btn:active {
+    transform: scale(0.985);
+    opacity: 1;
+    transition-duration: 120ms;
+  }
+
+  .btn-primary {
+    background: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  .btn-primary:hover {
+    background: var(--color-accent-hover);
+  }
+
+  .btn-quiet {
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+  }
+
+  .btn-quiet:hover {
+    border-color: var(--color-ink-3);
+  }
+
+  .btn-on-dark {
+    background: var(--color-white);
+    color: var(--color-black);
+  }
+
+  .link-accent {
+    color: var(--color-accent);
+    transition:
+      opacity 300ms var(--ease-power2),
+      color 300ms var(--ease-power2);
+  }
+
+  .link-accent:hover {
+    opacity: 0.75;
+  }
+}
+
+/* ===========================================================================
+   ESTADOS INICIALES DE LAS ANIMACIONES
+   GSAP anima *hacia* el estado visible, por lo que el estado oculto se declara
+   aqui y no en JavaScript. Asi no hay parpadeo entre el pintado del HTML y la
+   ejecucion del script.
+   =========================================================================== */
+.js [data-reveal],
+.js [data-hero],
+.js [data-milestone],
+.js [data-stagger] > * {
+  opacity: 0;
+  transform: translate3d(0, 24px, 0);
+  will-change: transform, opacity;
+}
+
+/* Red de seguridad. Si el modulo de movimiento no llega a inicializarse (fallo
+   de red, error de JS), un temporizador en el <head> marca el documento y todo
+   el contenido se muestra igualmente. Nada queda invisible por culpa del JS. */
+.motion-failed [data-reveal],
+.motion-failed [data-hero],
+.motion-failed [data-milestone],
+.motion-failed [data-stagger] > * {
+  opacity: 1 !important;
+  transform: none !important;
+  will-change: auto;
+}
+
+/* --- Linea de la trayectoria laboral ------------------------------------- */
+.timeline-progress {
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+
+.timeline-dot {
+  transition:
+    background-color 600ms var(--ease-expo),
+    border-color 600ms var(--ease-expo),
+    transform 600ms var(--ease-expo);
+}
+
+.timeline-item[data-passed='true'] .timeline-dot {
+  background-color: var(--color-ink);
+  border-color: var(--color-ink);
+  transform: scale(1.25);
+}
+
+/* --- Indicador de scroll -------------------------------------------------- */
+.cue-pulse {
+  animation: cue-fall 2.6s var(--ease-power2) infinite;
+}
+
+@keyframes cue-fall {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(5px);
+    opacity: 1;
+  }
+}
+
+/* --- Preferencia del sistema ---------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .js [data-reveal],
+  .js [data-hero],
+  .js [data-milestone],
+  .js [data-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* La linea se muestra completa, asi que los puntos deben acompanarla: de lo
+     contrario quedarian huecos sobre un trazo ya recorrido. */
+  .timeline-progress {
+    transform: scaleY(1);
+  }
+
+  .timeline-dot {
+    background-color: var(--color-ink) !important;
+    border-color: var(--color-ink) !important;
+    transition: none;
+  }
+
+  .cue-pulse {
+    animation: none;
+  }
+
+  .btn:hover,
+  .btn:active {
+    transform: none;
+  }
+}
+
+/* --- Impresion ------------------------------------------------------------ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .js [data-reveal],
+  .js [data-hero],
+  .js [data-milestone],
+  .js [data-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,29 @@
+---
+import Section from './Section.astro';
+import { CONTENT, type Locale } from '../i18n/content';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = CONTENT[lang].skills;
+---
+
+<Section id="habilidades" eyebrow={t.eyebrow} title={t.title}>
+  <div class="grid gap-14 md:grid-cols-3 md:gap-10 lg:gap-16" data-stagger>
+    {
+      t.groups.map((group) => (
+        <div>
+          <h3 class="text-[0.9375rem] text-ink-3">{group.label}</h3>
+
+          <ul class="mt-6 space-y-3.5">
+            {group.items.map((item) => (
+              <li class="text-[1.1875rem] tracking-[-0.02em] sm:text-[1.3125rem]">{item}</li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+</Section>

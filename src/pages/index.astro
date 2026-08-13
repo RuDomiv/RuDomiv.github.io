@@ -1,0 +1,33 @@
+---
+// Raiz del sitio: no tiene contenido propio. Detecta el idioma del navegador y
+// redirige a /es/, /en/ o /fr/. El <meta refresh> cubre el caso sin JavaScript.
+import { localePath } from '../i18n/utils';
+
+const paths = {
+  es: localePath('es'),
+  en: localePath('en'),
+  fr: localePath('fr'),
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Ruslán Domínguez Ivanova</title>
+    <link rel="canonical" href={paths.es} />
+    <meta http-equiv="refresh" content={`0; url=${paths.es}`} />
+    <script is:inline define:vars={{ paths }}>
+      var tag = (navigator.language || 'es').slice(0, 2).toLowerCase();
+      location.replace(paths[tag] || paths.es);
+    </script>
+  </head>
+  <body>
+    <p>
+      <a href={paths.es}>Español</a>, <a href={paths.en}>English</a>,
+      <a href={paths.fr}>Français</a>
+    </p>
+  </body>
+</html>

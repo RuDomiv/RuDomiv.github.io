@@ -1,0 +1,58 @@
+---
+import { CONTENT, CV_FILES, EMAIL, type Locale } from '../i18n/content';
+import { cvIsAvailable, withBase } from '../i18n/utils';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = CONTENT[lang].contact;
+const cvHref = withBase(CV_FILES[lang]);
+const hasCV = cvIsAvailable(CV_FILES[lang]);
+---
+
+<!-- Cierre en negro, en simetria con el capitulo de la admision. -->
+<section id="contacto" class="scroll-mt-24 bg-black py-28 text-white sm:py-36 lg:py-44">
+  <div class="container-page">
+    <p class="eyebrow text-white/50" data-reveal>{t.eyebrow}</p>
+
+    <h2 class="mt-4 text-[clamp(2.25rem,5.5vw,4.25rem)]" data-reveal>{t.title}</h2>
+
+    <p
+      class="mt-7 max-w-2xl text-[clamp(1.125rem,2vw,1.5rem)] leading-[1.5] text-white/60"
+      data-reveal
+    >
+      {t.lead}
+    </p>
+
+    <a href={`mailto:${EMAIL}`} class="group mt-14 block w-fit max-w-full" data-reveal>
+      <span
+        class="block text-[clamp(1.25rem,4vw,2.75rem)] font-semibold tracking-[-0.03em] break-words transition-opacity duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:opacity-60"
+      >
+        {EMAIL}
+      </span>
+      <span
+        class="mt-3 block h-px w-full bg-white/25 transition-colors duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:bg-white/60"
+        aria-hidden="true"></span>
+    </a>
+
+    <div class="mt-16 flex flex-wrap items-start gap-x-12 gap-y-8" data-reveal>
+      {
+        hasCV && (
+          <div class="no-print">
+            <a href={cvHref} download class="btn btn-on-dark">
+              {t.cta}
+            </a>
+            <p class="mt-3 text-[0.8125rem] text-white/40">{t.ctaNote}</p>
+          </div>
+        )
+      }
+
+      <div>
+        <p class="text-[0.8125rem] text-white/40">{t.locationLabel}</p>
+        <p class="mt-1.5 text-[1.0625rem]">{t.location}</p>
+      </div>
+    </div>
+  </div>
+</section>

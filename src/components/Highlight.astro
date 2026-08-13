@@ -1,0 +1,46 @@
+---
+import { CONTENT, type Locale } from '../i18n/content';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+const t = CONTENT[lang].highlight;
+---
+
+<!-- Capitulo en negro. Es el unico cambio de superficie del sitio, y por eso
+     marca cual es la informacion mas importante sin necesidad de adornarla. -->
+<section
+  id="enseeiht"
+  class="scroll-mt-24 bg-black py-28 text-white sm:py-36 lg:py-48"
+>
+  <div class="container-page">
+    <p class="eyebrow text-white/50" data-reveal>{t.eyebrow}</p>
+
+    <h2 class="mt-4 text-[clamp(2.75rem,9vw,8rem)]" data-reveal>{t.school}</h2>
+
+    <div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3" data-reveal>
+      <p class="text-[clamp(1.125rem,2vw,1.5rem)] text-white/55">{t.city}</p>
+      <span
+        class="inline-flex items-center gap-2 rounded-full border border-white/25 px-3.5 py-1 text-[0.8125rem] text-white/80"
+      >
+        <span class="inline-block h-1.5 w-1.5 rounded-full bg-white" aria-hidden="true"></span>
+        {t.badge}
+      </span>
+    </div>
+
+    <!-- Una sola columna: al retirarse el párrafo de contexto, una rejilla de
+         dos dejaría la mitad izquierda vacía. -->
+    <dl class="mt-16 max-w-4xl border-t border-white/15 lg:mt-24" data-stagger>
+      {
+        t.rows.map((row) => (
+          <div class="grid grid-cols-1 gap-1 border-b border-white/15 py-4 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-6">
+            <dt class="text-[0.9375rem] text-white/40">{row.k}</dt>
+            <dd class="text-[0.9375rem] text-white sm:text-base">{row.v}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>

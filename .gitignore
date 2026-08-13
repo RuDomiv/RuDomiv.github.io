@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+
+# Documentos con datos personales que NO deben publicarse ni entrar al
+# historial de git: fecha de nacimiento, nacionalidad, sexo y telefono.
+# El CV descargable definitivo va en public/, ya depurado de esos campos.
+cv-privado/
+.DS_Store
+*.log
+.env
+.env.production

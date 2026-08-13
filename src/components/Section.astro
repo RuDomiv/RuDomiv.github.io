@@ -1,0 +1,36 @@
+---
+interface Props {
+  id: string;
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  class?: string;
+}
+
+const { id, eyebrow, title, lead, class: cls = '' } = Astro.props;
+---
+
+<!-- Capitulo. El aire vertical es el que separa las secciones; no hacen falta
+     bordes ni cajas. -->
+<section id={id} class:list={['scroll-mt-24 py-28 sm:py-36 lg:py-48', cls]}>
+  <div class="container-page">
+    <p class="eyebrow" data-reveal>{eyebrow}</p>
+
+    <h2 class="mt-4 text-[clamp(2.25rem,5.5vw,4.25rem)]" data-reveal>{title}</h2>
+
+    {
+      lead && (
+        <p
+          class="mt-7 max-w-3xl text-[clamp(1.125rem,2vw,1.5rem)] leading-[1.5] text-ink-2"
+          data-reveal
+        >
+          {lead}
+        </p>
+      )
+    }
+
+    <div class="mt-16 sm:mt-20">
+      <slot />
+    </div>
+  </div>
+</section>

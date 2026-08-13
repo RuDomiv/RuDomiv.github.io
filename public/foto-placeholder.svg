@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 600" width="480" height="600" role="img" aria-label="Marcador de posicion de retrato">
+  <rect width="480" height="600" fill="#d8dcdf"/>
+  <g fill="none" stroke="#8b9199" stroke-width="1.5">
+    <path d="M40 40h400v520H40z"/>
+    <path d="M40 40 440 560M440 40 40 560" stroke-dasharray="6 10" opacity="0.35"/>
+  </g>
+  <g fill="#6f757e">
+    <circle cx="240" cy="248" r="66"/>
+    <path d="M240 336c-84 0-152 58-152 130v54h304v-54c0-72-68-130-152-130z"/>
+  </g>
+  <text x="240" y="576" text-anchor="middle" fill="#5b616a" font-family="monospace" font-size="17" letter-spacing="2">public/foto.jpg</text>
+</svg>
